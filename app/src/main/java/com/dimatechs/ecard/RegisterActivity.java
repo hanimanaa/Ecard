@@ -24,7 +24,7 @@ import java.util.HashMap;
 public class RegisterActivity extends AppCompatActivity {
 
     private Button CreateAccountBtn;
-    private EditText Etbusiness,Etfname,Etlname,Etphone,Etcity;
+    private EditText Etbusiness,Etfname,Etlname,Etphone,Etcity,Etpassword;
     private ProgressDialog loadingBar;
     
     @Override
@@ -38,6 +38,7 @@ public class RegisterActivity extends AppCompatActivity {
         Etlname=(EditText)findViewById(R.id.Etlname);
         Etphone=(EditText)findViewById(R.id.Etphone);
         Etcity=(EditText)findViewById(R.id.Etcity);
+        Etpassword=(EditText)findViewById(R.id.Etpassword);
         loadingBar=new ProgressDialog(this);
         
         CreateAccountBtn.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +57,8 @@ public class RegisterActivity extends AppCompatActivity {
         String lname =Etlname.getText().toString();
         String phone =Etphone.getText().toString();
         String city =Etcity.getText().toString();
+        String password =Etpassword.getText().toString();
+
 
         if(TextUtils.isEmpty(bisiness))
         {
@@ -77,6 +80,10 @@ public class RegisterActivity extends AppCompatActivity {
         {
             Toast.makeText(this, "רשום עיר בבקשה . . .", Toast.LENGTH_SHORT).show();
         }
+        else if(TextUtils.isEmpty(password))
+        {
+            Toast.makeText(this, "רשום סיסמה בבקשה . . .", Toast.LENGTH_SHORT).show();
+        }
         else
         {
             loadingBar.setTitle("יצירת חשבון");
@@ -84,14 +91,14 @@ public class RegisterActivity extends AppCompatActivity {
             loadingBar.setCanceledOnTouchOutside(false);
             loadingBar.show();
             
-            ValidatePhoneNumber(phone,bisiness,fname,lname,city);
+            ValidatePhoneNumber(phone,bisiness,fname,lname,city,password);
 
         }
 
 
     }
 
-    private void ValidatePhoneNumber(final String phone,final String bisiness,final String fname,final String lname,final String city)
+    private void ValidatePhoneNumber(final String phone,final String bisiness,final String fname,final String lname,final String city,final String password)
     {
         final DatabaseReference RootRef;
         RootRef = FirebaseDatabase.getInstance().getReference();
@@ -108,6 +115,8 @@ public class RegisterActivity extends AppCompatActivity {
                     userdataMap.put("lname",lname);
                     userdataMap.put("phone",phone);
                     userdataMap.put("city",city);
+                    userdataMap.put("password",password);
+
 
                     RootRef.child("Users").child(phone).updateChildren(userdataMap)
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
