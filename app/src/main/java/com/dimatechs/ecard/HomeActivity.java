@@ -99,7 +99,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 Intent intent = new Intent(HomeActivity.this,ProductDetailsActivity.class);
                                 intent.putExtra("pid",model.getPid());
                                 startActivity(intent);
-
+                                //test
                             }
                         });
                     }

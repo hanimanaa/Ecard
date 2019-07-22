@@ -42,6 +42,8 @@ public class NewProductActivity extends AppCompatActivity {
     private DatabaseReference ProductsRef;
     private ProgressDialog loadingBar;
 
+    // teast
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
