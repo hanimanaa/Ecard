@@ -42,27 +42,15 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        LoginButton=(Button)findViewById(R.id.login_btn);
-        InputNumber=(EditText) findViewById(R.id.login_phone_number_input);
-        InputPassword=(EditText) findViewById(R.id.login_password_input);
-        loadingBar=new ProgressDialog(this);
+        LoginButton = (Button) findViewById(R.id.login_btn);
+        InputNumber = (EditText) findViewById(R.id.login_phone_number_input);
+        InputPassword = (EditText) findViewById(R.id.login_password_input);
+        loadingBar = new ProgressDialog(this);
 
         chkBoxRememberMe = (CheckBox) findViewById(R.id.remember_me_chkb);
         Paper.init(this);
 
-
-        LoginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginUser();
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+        // check if user saved
         String UserPhoneKey = Paper.book().read(Prevalent.UserPhoneKey);
         String UserPasswordKey = Paper.book().read(Prevalent.UserPasswordKey);
 
@@ -70,15 +58,19 @@ public class LoginActivity extends AppCompatActivity {
         {
             if (!TextUtils.isEmpty(UserPhoneKey) && !TextUtils.isEmpty(UserPasswordKey))
             {
-                Log.d("hani","log old");
-                AllowAccessToAccount(UserPhoneKey, UserPasswordKey);
-                loadingBar.setTitle("כניסת משתמש");
-                loadingBar.setMessage("המתן בבקשה");
-                loadingBar.setCanceledOnTouchOutside(false);
-                loadingBar.show();
+                InputNumber.setText(UserPhoneKey);
+                InputPassword.setText(UserPasswordKey);
+                chkBoxRememberMe.setChecked(true);
 
             }
+
         }
+            LoginButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LoginUser();
+                }
+            });
 
     }
 
@@ -97,7 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         }
         else
         {
-            Log.d("hani","log new");
+
             AllowAccessToAccount(phone, password);
             loadingBar.setTitle("כניסת משתמש");
             loadingBar.setMessage("המתן בבקשה");
@@ -132,7 +124,8 @@ public class LoginActivity extends AppCompatActivity {
                    {
                        if(usersData.getPassword().equals(password))
                        {
-                           Toast.makeText(LoginActivity.this, "ברוך הבא", Toast.LENGTH_SHORT).show();
+                           String fullName = usersData.getFname() +" "+ usersData.getLname();
+                           Toast.makeText(LoginActivity.this, "ברוך הבא " + fullName, Toast.LENGTH_SHORT).show();
                            loadingBar.dismiss();
                            Intent intent=new Intent(LoginActivity.this,HomeActivity.class);
                            Prevalent.currentOnlineUser = usersData;
