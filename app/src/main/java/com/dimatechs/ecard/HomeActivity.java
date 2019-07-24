@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +25,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
+import io.paperdb.Paper;
+
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener  {
 
     private Button RegisterAccountBtn;
@@ -34,12 +37,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Log.d("hani", "onCreate");
 
      //   RegisterAccountBtn = (Button) findViewById(R.id.button1);
       //  RegisterAccountBtn.setOnClickListener(this);
 
+        Paper.init(this);
 
         btn = (FloatingActionButton) findViewById(R.id.btn);
         btn.setOnClickListener(this);
@@ -68,6 +75,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d("hani", "onCreateOptionsMenu");
+
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
@@ -75,6 +84,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart()
     {
+        Log.d("hani", "onStart");
+
         super.onStart();
         FirebaseRecyclerOptions<Products> options=
                 new FirebaseRecyclerOptions.Builder<Products>()
@@ -107,6 +118,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public ProductViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
                     {
+                        Log.d("hani", "onCreateViewHolder");
+
                         View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.product_items_layout,parent,false);
                         ProductViewHolder holder = new ProductViewHolder(view);
                         return holder;
@@ -118,7 +131,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
@@ -142,8 +156,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         else if (id == R.id.action_Exit) {
             Toast.makeText(this,"you selected יציאה",Toast.LENGTH_LONG).show();
-            android.os.Process.killProcess(android.os.Process.myPid());
-            System.exit(1);
+         //   android.os.Process.killProcess(android.os.Process.myPid());
+           // System.exit(1);
+            Paper.book().destroy();
+
+            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+
+
+
             return true;
         }
         return true;
