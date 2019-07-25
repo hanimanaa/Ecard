@@ -9,7 +9,7 @@
         />
     <item
         android:id="@+id/action_Update"
-        android:title="עדכון פרטים"
+        android:title="עדכון פרופיל"
         android:orderInCategory="200"
         />
     <item

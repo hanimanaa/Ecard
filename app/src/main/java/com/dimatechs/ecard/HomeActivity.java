@@ -144,6 +144,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (id == R.id.action_Update) {
             Toast.makeText(this, "you selected עדכון", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getApplicationContext(),SettinsActivity.class);
+            startActivity(intent);
             return true;
         }
 
