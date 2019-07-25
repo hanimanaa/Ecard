@@ -1,5 +1,7 @@
 package com.dimatechs.ecard;
 
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,9 +9,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 import com.dimatechs.ecard.Model.Products;
+import com.dimatechs.ecard.Prevalent.Prevalent;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,9 +74,9 @@ public class ProductDetailsActivity extends AppCompatActivity {
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
         saveCurrentTime=currentTime.format(calendar.getTime());
 
-        DatabaseReference carListRef=FirebaseDatabase.getInstance().getReference().child("cart List");
+        final DatabaseReference carListRef=FirebaseDatabase.getInstance().getReference().child("cart List");
 
-        HashMap<String,Object> cartMap =  new HashMap<>();
+        final HashMap<String,Object> cartMap =  new HashMap<>();
         cartMap.put("pid",productID);
         cartMap.put("date",saveCurrentDate);
         cartMap.put("time",saveCurrentTime);
@@ -78,7 +84,30 @@ public class ProductDetailsActivity extends AppCompatActivity {
         cartMap.put("price",productPrice.getText().toString());
         cartMap.put("quantity",numberButton.getNumber());
 
-       // carListRef.child("User View").child(Prevalent.currentOnlineUser.getPhone()).child("Products");
+         carListRef.child("User View").child(Prevalent.currentOnlineUser.getPhone())
+                 .child("Products").child(productID)
+                 .updateChildren(cartMap)
+                 .addOnCompleteListener(new OnCompleteListener<Void>() {
+                     @Override
+                     public void onComplete(@NonNull Task<Void> task)
+                     {
+                            if(task.isSuccessful())
+                            {
+                                carListRef.child("Admin View").child(Prevalent.currentOnlineUser.getPhone())
+                                        .child("Products").child(productID)
+                                        .updateChildren(cartMap)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                Toast.makeText(ProductDetailsActivity.this, "הןסף לסל - המשך בקניה", Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(ProductDetailsActivity.this, HomeActivity.class);
+                                                startActivity(intent);
+                                            }
+
+                                        });
+                            }
+                     }
+                 });
 
 
     }
