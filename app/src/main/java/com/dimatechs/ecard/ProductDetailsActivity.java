@@ -34,7 +34,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private ImageView productImage;
     private ElegantNumberButton numberButton;
     private TextView productPrice,productDescription,productName;
-    private String productID;
+    private String productID="";
+    private String PPrice="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product_details);
 
         productID=getIntent().getStringExtra("pid");
+        PPrice=getIntent().getStringExtra("pprice");
 
         addToCartBtn=(Button)findViewById(R.id.pd_add_to_cart_btn);
         numberButton=(ElegantNumberButton)findViewById(R.id.number_btn);
@@ -81,7 +83,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         cartMap.put("date",saveCurrentDate);
         cartMap.put("time",saveCurrentTime);
         cartMap.put("name",productName.getText().toString());
-        cartMap.put("price",productPrice.getText().toString());
+        cartMap.put("price",PPrice);
         cartMap.put("quantity",numberButton.getNumber());
 
          carListRef.child("User View").child(Prevalent.currentOnlineUser.getPhone())

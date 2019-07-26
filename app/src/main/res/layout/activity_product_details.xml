@@ -65,7 +65,7 @@
         android:elevation="6dp"
         app:textSize="10dp"
         app:initialNumber="1"
-        app:finalNumber="10"
+        app:finalNumber="100"
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:layout_below="@+id/product_price_details"

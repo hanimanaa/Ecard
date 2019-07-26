@@ -103,14 +103,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         holder.txtProductPrice.setText(" מחיר : " +model.getPrice() + " ש\"ח ");
                         Picasso.get().load(model.getImage()).into(holder.imageView);
 
+
                         holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view)
                             {
                                 Intent intent = new Intent(HomeActivity.this,ProductDetailsActivity.class);
                                 intent.putExtra("pid",model.getPid());
+                                intent.putExtra("pprice",model.getPrice());
                                 startActivity(intent);
-                                //test
+
                             }
                         });
                     }
