@@ -74,7 +74,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
         saveCurrentTime=currentTime.format(calendar.getTime());
 
-        final DatabaseReference carListRef=FirebaseDatabase.getInstance().getReference().child("cart List");
+        final DatabaseReference carListRef=FirebaseDatabase.getInstance().getReference().child("Cart List");
 
         final HashMap<String,Object> cartMap =  new HashMap<>();
         cartMap.put("pid",productID);
@@ -99,7 +99,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
-                                                Toast.makeText(ProductDetailsActivity.this, "הןסף לסל - המשך בקניה", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(ProductDetailsActivity.this, "הוסף לסל - המשך בקניה", Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(ProductDetailsActivity.this, HomeActivity.class);
                                                 startActivity(intent);
                                             }

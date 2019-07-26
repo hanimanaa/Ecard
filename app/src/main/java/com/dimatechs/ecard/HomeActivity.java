@@ -68,7 +68,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
         else if (view==btn){
             Toast.makeText(HomeActivity.this, "סל קניות", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), ShopCardActivity.class);
+            Intent intent = new Intent(getApplicationContext(), CartActivity.class);
             startActivity(intent);
         }
     }
