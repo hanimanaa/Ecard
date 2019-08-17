@@ -43,7 +43,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product_details);
 
         productID=getIntent().getStringExtra("pid");
-        PPrice=getIntent().getStringExtra("pprice");
 
         addToCartBtn=(Button)findViewById(R.id.pd_add_to_cart_btn);
         numberButton=(ElegantNumberButton)findViewById(R.id.number_btn);
@@ -127,7 +126,8 @@ public class ProductDetailsActivity extends AppCompatActivity {
                     Products products=dataSnapshot.getValue(Products.class);
 
                     productName.setText(products.getName());
-                    productPrice.setText(" מחיר : " +products.getPrice() + " ש\"ח ");
+                    productPrice.setText(" מחיר : " +products.getPrice()+ " ש\"ח ");
+                    PPrice=products.getPrice();
                     productDescription.setText(products.getDescription());
                     Picasso.get().load(products.getImage()).into(productImage);
 

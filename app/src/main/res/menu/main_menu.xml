@@ -22,6 +22,11 @@
         android:title="מנהל"
         android:orderInCategory="450"
         />
+    <item
+        android:id="@+id/action_Orders"
+        android:title="הזמנות"
+        android:orderInCategory="452"
+        />
 
 
 </menu>

@@ -110,7 +110,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                             {
                                 Intent intent = new Intent(HomeActivity.this,ProductDetailsActivity.class);
                                 intent.putExtra("pid",model.getPid());
-                                intent.putExtra("pprice",model.getPrice());
                                 startActivity(intent);
 
                             }
@@ -156,6 +155,15 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 Intent intent = new Intent(getApplicationContext(),NewProductActivity.class);
                 startActivity(intent);
                 return true;
+
+
+        }
+
+        else if (id == R.id.action_Orders) {
+            Toast.makeText(this,"הזמנות",Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(getApplicationContext(),AdminNewOrdersActivity.class);
+            startActivity(intent);
+            return true;
 
 
         }
