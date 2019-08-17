@@ -34,6 +34,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import io.paperdb.Paper;
+
 public class CartActivity extends AppCompatActivity
 {
     private  RecyclerView recyclerView;
@@ -48,6 +50,8 @@ public class CartActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
+        Paper.init(this);
+
 
         recyclerView=(RecyclerView)findViewById(R.id.cart_list);
         recyclerView.setHasFixedSize(true);
@@ -83,7 +87,7 @@ public class CartActivity extends AppCompatActivity
         final DatabaseReference ordersRef= FirebaseDatabase.getInstance().getReference()
                 .child("Cart List")
                 .child("User View")
-                .child(Prevalent.currentOnlineUser.getPhone());
+                .child(Prevalent.currentOnlineUser.getPhone()) ;
 
         ordersRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -119,6 +123,7 @@ public class CartActivity extends AppCompatActivity
                 new FirebaseRecyclerOptions.Builder<Cart>()
                         .setQuery(CartListRef.child("User View")
                         .child(Prevalent.currentOnlineUser.getPhone())
+                        .child(Paper.book().read(Prevalent.UserOrderKey).toString())
                         .child("Products"),Cart.class)
                         .build();
 
@@ -162,6 +167,7 @@ public class CartActivity extends AppCompatActivity
                                         {
                                             CartListRef.child("User View")
                                                     .child(Prevalent.currentOnlineUser.getPhone())
+                                                    .child(Paper.book().read(Prevalent.UserOrderKey).toString())
                                                     .child("Products")
                                                     .child(model.getPid())
                                                     .removeValue()
@@ -171,9 +177,25 @@ public class CartActivity extends AppCompatActivity
                                                         {
                                                                 if(task.isSuccessful())
                                                                 {
-                                                                    Toast.makeText(CartActivity.this, "המוצר הוסר בהצלחה", Toast.LENGTH_SHORT).show();
-                                                                 //   Intent intent=new Intent(CartActivity.this,HomeActivity.class);
-                                                                 //   startActivity(intent);
+                                                                    CartListRef.child("Admin View")
+                                                                            .child(Prevalent.currentOnlineUser.getPhone())
+                                                                            .child(Paper.book().read(Prevalent.UserOrderKey).toString())
+                                                                            .child("Products")
+                                                                            .child(model.getPid())
+                                                                            .removeValue()
+                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                @Override
+                                                                                public void onComplete(@NonNull Task<Void> task)
+                                                                                {
+                                                                                    if(task.isSuccessful())
+                                                                                    {
+                                                                                        Toast.makeText(CartActivity.this, "המוצר הוסר בהצלחה", Toast.LENGTH_SHORT).show();
+                                                                                        //   Intent intent=new Intent(CartActivity.this,HomeActivity.class);
+                                                                                        //   startActivity(intent);
+                                                                                    }
+
+                                                                                }
+                                                                            });
                                                                 }
 
                                                         }

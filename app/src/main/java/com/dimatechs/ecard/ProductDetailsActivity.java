@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import io.paperdb.Paper;
+
 public class ProductDetailsActivity extends AppCompatActivity {
 
    // private FloatingActionButton addToCartBtn;
@@ -36,13 +38,20 @@ public class ProductDetailsActivity extends AppCompatActivity {
     private TextView productPrice,productDescription,productName;
     private String productID="";
     private String PPrice="";
+    DatabaseReference orderListRef,carListRef;
+    String maxid="0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_details);
+        Paper.init(this);
+
+       String UserOrderKey = Paper.book().read(Prevalent.UserOrderKey);
 
         productID=getIntent().getStringExtra("pid");
+        Paper.init(this);
+
 
         addToCartBtn=(Button)findViewById(R.id.pd_add_to_cart_btn);
         numberButton=(ElegantNumberButton)findViewById(R.id.number_btn);
@@ -52,6 +61,52 @@ public class ProductDetailsActivity extends AppCompatActivity {
         productPrice=(TextView)findViewById(R.id.product_price_details);
 
         getProductDetails(productID);
+
+        carListRef=FirebaseDatabase.getInstance().getReference().child("Cart List").child("User View").child(Prevalent.currentOnlineUser.getPhone());
+        carListRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                if(!dataSnapshot.exists())
+                {
+                    // get orders counter
+                    orderListRef=FirebaseDatabase.getInstance().getReference().child("OrdersAutoNum");
+                    orderListRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot)
+                        {
+                            if(dataSnapshot.exists())
+                            {
+                                maxid = (dataSnapshot.getValue().toString());
+                                Paper.book().write(Prevalent.UserOrderKey, maxid);
+                                int x=Integer.parseInt(maxid)+1;
+                                orderListRef.setValue(x);
+                                Toast.makeText(ProductDetailsActivity.this, "new order num", Toast.LENGTH_SHORT).show();
+
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+                else
+                {
+                    maxid=Paper.book().read(Prevalent.UserOrderKey);
+                    Toast.makeText(ProductDetailsActivity.this, "ex", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
         addToCartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +131,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         saveCurrentTime=currentTime.format(calendar.getTime());
 
         final DatabaseReference carListRef=FirebaseDatabase.getInstance().getReference().child("Cart List");
+// .child(Paper.book().read(Prevalent.UserOrderKey).toString())
 
         final HashMap<String,Object> cartMap =  new HashMap<>();
         cartMap.put("pid",productID);
@@ -86,6 +142,7 @@ public class ProductDetailsActivity extends AppCompatActivity {
         cartMap.put("quantity",numberButton.getNumber());
 
          carListRef.child("User View").child(Prevalent.currentOnlineUser.getPhone())
+                 .child(maxid)
                  .child("Products").child(productID)
                  .updateChildren(cartMap)
                  .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -95,11 +152,13 @@ public class ProductDetailsActivity extends AppCompatActivity {
                             if(task.isSuccessful())
                             {
                                 carListRef.child("Admin View").child(Prevalent.currentOnlineUser.getPhone())
+                                        .child(maxid)
                                         .child("Products").child(productID)
                                         .updateChildren(cartMap)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
+
                                                 Toast.makeText(ProductDetailsActivity.this, "הוסף לסל - המשך בקניה", Toast.LENGTH_SHORT).show();
                                                 Intent intent = new Intent(ProductDetailsActivity.this, HomeActivity.class);
                                                 startActivity(intent);

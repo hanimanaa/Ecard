@@ -172,7 +172,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this,"you selected יציאה",Toast.LENGTH_LONG).show();
          //   android.os.Process.killProcess(android.os.Process.myPid());
            // System.exit(1);
-            Paper.book().destroy();
+           // Paper.book().destroy();
 
             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);

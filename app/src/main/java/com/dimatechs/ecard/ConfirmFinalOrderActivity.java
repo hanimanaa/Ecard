@@ -18,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import io.paperdb.Paper;
+
 public class ConfirmFinalOrderActivity extends AppCompatActivity {
 
     private Button confirmOrderBtn;
@@ -26,6 +28,8 @@ public class ConfirmFinalOrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_final_order);
+        Paper.init(this);
+
 
         totalAmount=getIntent().getStringExtra("Total Price");
 
@@ -54,6 +58,7 @@ public class ConfirmFinalOrderActivity extends AppCompatActivity {
 
         final DatabaseReference ordersRef= FirebaseDatabase.getInstance().getReference()
                 .child("Orders")
+                .child(Paper.book().read(Prevalent.UserOrderKey).toString())
                 .child(Prevalent.currentOnlineUser.getPhone());
 
         final HashMap<String,Object> ordersMap =  new HashMap<>();
