@@ -93,14 +93,15 @@ public class CartActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot)
             {
-                if(!dataSnapshot.exists())
+                if(!dataSnapshot.exists() || Paper.book().read(Prevalent.UserOrderKey) == null)
                 {
                     recyclerView.setVisibility(View.GONE);
                     txtMsg1.setVisibility(View.VISIBLE);
                     image.setVisibility(View.VISIBLE);
                     NextprocessBtn.setVisibility(View.GONE);
-
                 }
+                else
+                    loadProducts();
 
             }
 
@@ -111,60 +112,52 @@ public class CartActivity extends AppCompatActivity
         });
     }
 
-    @Override
-    protected void onStart()
-    {
-        super.onStart();
-        check();
 
-        final DatabaseReference CartListRef= FirebaseDatabase.getInstance().getReference().child("Cart List");
+    private void loadProducts()
+    {
+        final DatabaseReference CartListRef = FirebaseDatabase.getInstance().getReference().child("Cart List");
         Log.d("cart", "onStart");
-        FirebaseRecyclerOptions<Cart> options=
+        FirebaseRecyclerOptions<Cart> options =
                 new FirebaseRecyclerOptions.Builder<Cart>()
                         .setQuery(CartListRef.child("User View")
-                        .child(Prevalent.currentOnlineUser.getPhone())
-                        .child(Paper.book().read(Prevalent.UserOrderKey).toString())
-                        .child("Products"),Cart.class)
+                                .child(Prevalent.currentOnlineUser.getPhone())
+                                .child(Paper.book().read(Prevalent.UserOrderKey).toString())
+                                .child("Products"), Cart.class)
                         .build();
 
-        FirebaseRecyclerAdapter<Cart, CartViewHolder> adapter=
+        FirebaseRecyclerAdapter<Cart, CartViewHolder> adapter =
                 new FirebaseRecyclerAdapter<Cart, CartViewHolder>(options) {
 
                     @Override
-                    protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull final Cart model)
-                    {
+                    protected void onBindViewHolder(@NonNull CartViewHolder holder, int position, @NonNull final Cart model) {
                         Log.d("cart", "onBindViewHolder");
                         holder.txtProductName.setText(model.getName());
-                        holder.txtProductPrice.setText( " מחיר : " + model.getPrice()+ " ש\"ח ");
+                        holder.txtProductPrice.setText(" מחיר : " + model.getPrice() + " ש\"ח ");
                         holder.txtProductQuantity.setText(" כמות : " + model.getQuantity());
 
-                        int oneTypeProductTPrice=(Integer.valueOf(model.getPrice())) * Integer.valueOf(model.getQuantity());
-                        overTotalPrice=overTotalPrice+oneTypeProductTPrice;
+                        int oneTypeProductTPrice = (Integer.valueOf(model.getPrice())) * Integer.valueOf(model.getQuantity());
+                        overTotalPrice = overTotalPrice + oneTypeProductTPrice;
 
                         holder.itemView.setOnClickListener(new View.OnClickListener() {
                             @Override
-                            public void onClick(View view)
-                            {
-                                CharSequence options[]=new CharSequence[]
+                            public void onClick(View view) {
+                                CharSequence options[] = new CharSequence[]
                                         {
                                                 "עדכון כמות",
                                                 "הסרת מוצר"
                                         };
-                                AlertDialog.Builder builder= new AlertDialog.Builder(CartActivity.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(CartActivity.this);
                                 builder.setTitle("אפשריות : ");
 
                                 builder.setItems(options, new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialogInterface, int i)
-                                    {
-                                        if(i==0)
-                                        {
-                                            Intent intent=new Intent(CartActivity.this,ProductDetailsActivity.class);
-                                            intent.putExtra("pid",model.getPid());
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        if (i == 0) {
+                                            Intent intent = new Intent(CartActivity.this, ProductDetailsActivity.class);
+                                            intent.putExtra("pid", model.getPid());
                                             startActivity(intent);
                                         }
-                                        if(i==1)
-                                        {
+                                        if (i == 1) {
                                             CartListRef.child("User View")
                                                     .child(Prevalent.currentOnlineUser.getPhone())
                                                     .child(Paper.book().read(Prevalent.UserOrderKey).toString())
@@ -173,30 +166,26 @@ public class CartActivity extends AppCompatActivity
                                                     .removeValue()
                                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                         @Override
-                                                        public void onComplete(@NonNull Task<Void> task)
-                                                        {
-                                                                if(task.isSuccessful())
-                                                                {
-                                                                    CartListRef.child("Admin View")
-                                                                            .child(Prevalent.currentOnlineUser.getPhone())
-                                                                            .child(Paper.book().read(Prevalent.UserOrderKey).toString())
-                                                                            .child("Products")
-                                                                            .child(model.getPid())
-                                                                            .removeValue()
-                                                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                                @Override
-                                                                                public void onComplete(@NonNull Task<Void> task)
-                                                                                {
-                                                                                    if(task.isSuccessful())
-                                                                                    {
-                                                                                        Toast.makeText(CartActivity.this, "המוצר הוסר בהצלחה", Toast.LENGTH_SHORT).show();
-                                                                                        //   Intent intent=new Intent(CartActivity.this,HomeActivity.class);
-                                                                                        //   startActivity(intent);
-                                                                                    }
-
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                CartListRef.child("Admin View")
+                                                                        .child(Prevalent.currentOnlineUser.getPhone())
+                                                                        .child(Paper.book().read(Prevalent.UserOrderKey).toString())
+                                                                        .child("Products")
+                                                                        .child(model.getPid())
+                                                                        .removeValue()
+                                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                            @Override
+                                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                                if (task.isSuccessful()) {
+                                                                                    Toast.makeText(CartActivity.this, "המוצר הוסר בהצלחה", Toast.LENGTH_SHORT).show();
+                                                                                    //   Intent intent=new Intent(CartActivity.this,HomeActivity.class);
+                                                                                    //   startActivity(intent);
                                                                                 }
-                                                                            });
-                                                                }
+
+                                                                            }
+                                                                        });
+                                                            }
 
                                                         }
                                                     });
@@ -212,17 +201,26 @@ public class CartActivity extends AppCompatActivity
 
                     @NonNull
                     @Override
-                    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-                    {
+                    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                         Log.d("cart", "onCreateViewHolder");
 
-                        View view= LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_items_layout,parent,false);
+                        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cart_items_layout, parent, false);
                         CartViewHolder holder = new CartViewHolder(view);
                         return holder;
                     }
                 };
         recyclerView.setAdapter(adapter);
         adapter.startListening();
+    }
+
+
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        check();
+
+
     }
 
 }

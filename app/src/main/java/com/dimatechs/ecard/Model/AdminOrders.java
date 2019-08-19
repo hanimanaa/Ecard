@@ -2,18 +2,36 @@ package com.dimatechs.ecard.Model;
 
 public class AdminOrders
 {
-    private String name,phone,date,time,state,totalAmount;
+    private String name,phone,date,time,state,totalAmount,address,orderNum;
 
     public AdminOrders() {
     }
 
-    public AdminOrders(String name, String phone, String date, String time, String state, String totalAmount) {
+    public AdminOrders(String name, String phone, String date, String time, String state, String totalAmount, String address, String orderNum) {
         this.name = name;
         this.phone = phone;
         this.date = date;
         this.time = time;
         this.state = state;
         this.totalAmount = totalAmount;
+        this.address = address;
+        this.orderNum = orderNum;
+    }
+
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String orderNum) {
+        this.orderNum = orderNum;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getName() {

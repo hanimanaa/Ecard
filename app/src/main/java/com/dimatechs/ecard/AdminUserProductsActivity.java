@@ -9,37 +9,49 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.dimatechs.ecard.Model.AdminOrders;
 import com.dimatechs.ecard.Model.Cart;
 import com.dimatechs.ecard.ViewHolder.CartViewHolder;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AdminUserProductsActivity extends AppCompatActivity {
 
     private RecyclerView productsList;
     private DatabaseReference cartListRef;
     RecyclerView.LayoutManager layoutManager;
-    private String userID ="";
+    private String orderNum ="";
+    public String phonex ="";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_user_products);
 
-        userID =getIntent().getStringExtra("uid");
+        orderNum =getIntent().getStringExtra("orderNum");
+       // phone =getIntent().getStringExtra("phone");
+
         productsList=findViewById(R.id.products_list);
         productsList.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         productsList.setLayoutManager(layoutManager);
 
+
+
+
         cartListRef = FirebaseDatabase.getInstance().getReference()
                 .child("Cart List")
                 .child("Admin View")
-                .child(userID)
+                .child(orderNum)
                 .child("Products");
 
     }
@@ -47,6 +59,24 @@ public class AdminUserProductsActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Orders").child(orderNum);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
+                AdminOrders order = dataSnapshot.getValue(AdminOrders.class);
+                phonex=order.getPhone();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Toast.makeText(this, phonex, Toast.LENGTH_SHORT).show();
 
         FirebaseRecyclerOptions<Cart> options=
                 new FirebaseRecyclerOptions.Builder<Cart>()

@@ -131,7 +131,6 @@ public class ProductDetailsActivity extends AppCompatActivity {
         saveCurrentTime=currentTime.format(calendar.getTime());
 
         final DatabaseReference carListRef=FirebaseDatabase.getInstance().getReference().child("Cart List");
-// .child(Paper.book().read(Prevalent.UserOrderKey).toString())
 
         final HashMap<String,Object> cartMap =  new HashMap<>();
         cartMap.put("pid",productID);
@@ -141,9 +140,13 @@ public class ProductDetailsActivity extends AppCompatActivity {
         cartMap.put("price",PPrice);
         cartMap.put("quantity",numberButton.getNumber());
 
-         carListRef.child("User View").child(Prevalent.currentOnlineUser.getPhone())
+        //.child(Prevalent.currentOnlineUser.getPhone())
+
+         carListRef.child("User View")
+                 .child(Prevalent.currentOnlineUser.getPhone())
                  .child(maxid)
-                 .child("Products").child(productID)
+                 .child("Products")
+                 .child(productID)
                  .updateChildren(cartMap)
                  .addOnCompleteListener(new OnCompleteListener<Void>() {
                      @Override
@@ -151,9 +154,10 @@ public class ProductDetailsActivity extends AppCompatActivity {
                      {
                             if(task.isSuccessful())
                             {
-                                carListRef.child("Admin View").child(Prevalent.currentOnlineUser.getPhone())
+                                carListRef.child("Admin View")
                                         .child(maxid)
-                                        .child("Products").child(productID)
+                                        .child("Products")
+                                        .child(productID)
                                         .updateChildren(cartMap)
                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                             @Override
